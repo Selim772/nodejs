@@ -1,15 +1,13 @@
-// exports.signup = (req, res) => {
-//   res.send("You are signup");
-// };
-// exports.login = (req, res) => {
-//   res.send("You are logged in");
-// };
-
+const bcrypt = require('bcrypt');
 const { User } = require('../models/user.js');
 
 exports.signup = async (req, res) => {
+  const { firstName, lastName, email, password } = req.body;
+
   try {
-    const user = await User.create({ ...req.body });
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({ ...req.body, password: hashedPassword });
 
     res.status(201).json(user);
   } catch (error) {
