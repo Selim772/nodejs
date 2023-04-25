@@ -2,7 +2,6 @@ const bcrypt = require('bcrypt');
 const { User } = require('../models/user.js');
 
 exports.signup = async (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
