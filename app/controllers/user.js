@@ -5,7 +5,7 @@
 //   res.send("You are logged in");
 // };
 
-const { User } = require('../models/user.sj');
+const { User } = require('../models/user.js');
 
 exports.signup = async (req, res) => {
   const { firstnName, lastName, email, password } = req.body;
