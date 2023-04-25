@@ -8,10 +8,8 @@
 const { User } = require('../models/user.js');
 
 exports.signup = async (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
-
   try {
-    const user = await User.create({ firstName, lastName, email, password });
+    const user = await User.create({ ...req.body });
 
     res.status(201).json(user);
   } catch (error) {
@@ -19,7 +17,6 @@ exports.signup = async (req, res) => {
     res.status(500).json({ message: 'Une erreur est survenue lors de la création du compte utilisateur.' });
   }
 };
-
 
 exports.login = (req, res) => {
   res.send("You are logged in");
