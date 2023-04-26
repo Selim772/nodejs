@@ -10,7 +10,7 @@ exports.readAllWoods = async (req, res) => {
   }
 };
 
-exports.findByHardness = async (req, res) => {
+exports.readByHardness = async (req, res) => {
     const { hardness } = req.params;
   
     try {
