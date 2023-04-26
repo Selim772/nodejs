@@ -7,12 +7,13 @@
 
 // module.exports = router;
 
-const express = require('express');
-const router = express.Router();
+const express = require("express");
+const router = express();
+const userCtrl = require("../controllers/wood.js");
+const woodController = require('../controllers/wood');
 
-const woodController = require('../controllers/wood.js');
-
-// Route pour récupérer les essences de bois selon leur dureté
+router.post("/wood", userCtrl.wood);
 router.get('/:hardness', woodController.getWoodsByHardness);
+
 
 module.exports = router;
