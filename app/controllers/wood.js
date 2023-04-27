@@ -24,16 +24,16 @@ exports.readByHardness = async (req, res) => {
 };
 
 exports.createWood = async (req, res) => {
-    const pathname = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
-    const { name, hardness } = JSON.parse(req.body.datas);
-    const image = req.file.filename;
-  
-    try {
-        const wood = await Wood.create({ name, hardness, image: pathname });
-  
-      res.status(201).json(wood);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Une erreur est survenue lors de la création de l\'essence de bois.' });
-    }
-  };
+  const { filename } = req.file;
+  const pathname = `${req.protocol}://${req.get("host")}/uploads/${filename}`;
+  const { name, hardness, ...rest } = JSON.parse(req.body.datas);
+
+  try {
+    const wood = await Wood.create({ name, hardness, image: pathname, ...rest });
+
+    res.status(201).json(wood);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Une erreur est survenue lors de la création de l\'essence de bois.' });
+  }
+};
