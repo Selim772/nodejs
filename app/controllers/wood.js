@@ -11,14 +11,29 @@ exports.readAllWoods = async (req, res) => {
 };
 
 exports.readByHardness = async (req, res) => {
-    const { hardness } = req.params;
+  const { hardness } = req.params;
+
+  try {
+    const woods = await Wood.findAll({ where: { hardness } });
+
+    res.status(200).json(woods);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Une erreur est survenue lors de la récupération des essences de bois.' });
+  }
+};
+
+exports.createWood = async (req, res) => {
+    const pathname = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    const { name, hardness } = JSON.parse(req.body.datas);
+    const image = req.file.filename;
   
     try {
-      const woods = await Wood.findAll({ where: { hardness } });
+        const wood = await Wood.create({ name, hardness, image: pathname });
   
-      res.status(200).json(woods);
+      res.status(201).json(wood);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Une erreur est survenue lors de la récupération des essences de bois.' });
+      res.status(500).json({ message: 'Une erreur est survenue lors de la création de l\'essence de bois.' });
     }
   };

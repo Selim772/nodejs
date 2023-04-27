@@ -4,6 +4,7 @@ const router = require("./app/routes/index.js");
 app.use(express.json());
 //Ajout des routes
 app.use("/api", router);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const db = require("./app/models/index.js");
 db.sequelize

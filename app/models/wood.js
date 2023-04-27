@@ -32,6 +32,10 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'Veuillez entrer la dureté du bois'
         }
       }
+    },
+    image: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   }, {
     sequelize,
