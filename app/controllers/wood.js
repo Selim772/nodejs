@@ -29,7 +29,11 @@ exports.createWood = async (req, res) => {
   const { name, hardness, ...rest } = JSON.parse(req.body.datas);
 
   try {
-    const wood = await Wood.create({ name, hardness, image: pathname, ...rest });
+    const wood = await Wood.create({ ...JSON.parse(req.body.datas), image: pathname });
+    if (filename) {
+      wood.image = pathname;
+      await wood.save();
+    }
 
     res.status(201).json(wood);
   } catch (error) {
