@@ -55,9 +55,13 @@ exports.updateWood = async (req, res) => {
   
       if (filename) {
         const pathname = `${req.protocol}://${req.get("host")}/uploads/${filename}`;
+        
+        if (wood.image) {
+          const oldImagePath = wood.image.replace(`${req.protocol}://${req.get("host")}`, ".");
+          fs.unlink(oldImagePath);
+        }
+  
         updatedValues.image = pathname;
-      } else {
-        updatedValues.image = wood.image;
       }
   
       await wood.update(updatedValues);
@@ -69,6 +73,7 @@ exports.updateWood = async (req, res) => {
     }
   };
   
+  
 
   exports.deleteWood = async (req, res) => {
     const { id } = req.params;
@@ -79,17 +84,18 @@ exports.updateWood = async (req, res) => {
       if (!wood) {
         return res.status(404).json({ message: `L'essence de bois ${id} n'existe pas.` });
       }
-
+  
       const deletedWood = await wood.destroy();
   
       if (deletedWood) {
-        const imagePath = wood.image.substring(wood.image.lastIndexOf('/') + 1);
-        fs.unlink(`./uploads/${imagePath}`, (err) => {
-          if (err) {
-            console.error(err);
-          }
-        });
-  
+        if (wood.image) {
+          const imagePath = wood.image.substring(wood.image.lastIndexOf('/') + 1);
+          fs.unlink(`./uploads/${imagePath}`, (err) => {
+            if (err) {
+              console.error(err);
+            }
+          });
+        }
         res.status(200).json({ message: `L'essence de bois ${id} a été supprimée.` });
       } else {
         res.status(500).json({ message: 'Une erreur est survenue lors de la suppression de l\'essence de bois.' });
@@ -99,6 +105,7 @@ exports.updateWood = async (req, res) => {
       res.status(500).json({ message: 'Une erreur est survenue lors de la suppression de l\'essence de bois.' });
     }
   };
+  
 
   
   
