@@ -44,39 +44,62 @@ exports.createWood = async (req, res) => {
 exports.updateWood = async (req, res) => {
     const { id } = req.params;
     const { filename } = req.file;
-    const pathname = `${req.protocol}://${req.get("host")}/uploads/${filename}`;
-    const updatedWood = await Wood.update({ ...JSON.parse(req.body.datas), image: pathname });
+    const updatedValues = JSON.parse(req.body.datas);
   
     try {
       let wood = await Wood.findByPk(id);
       if (!wood) {
-        res.status(404).json({ message: 'Non trouvée' });
+        res.status(404).json({ message: 'Essence de bois non trouvée.' });
         return;
       }
   
-      res.status(200).json(updatedWood);
+      if (filename) {
+        const pathname = `${req.protocol}://${req.get("host")}/uploads/${filename}`;
+        updatedValues.image = pathname;
+      } else {
+        updatedValues.image = wood.image;
+      }
+  
+      await wood.update(updatedValues);
+  
+      res.status(200).json(wood);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Une erreur est survenue lors de la mise à jour de l\'essence de bois.' });
     }
   };
+  
 
   exports.deleteWood = async (req, res) => {
     const { id } = req.params;
   
     try {
-      const deletedWood = await Wood.destroy({ where: { id } });
+      const wood = await Wood.findByPk(id);
   
-      if (deletedWood === 0) {
+      if (!wood) {
         return res.status(404).json({ message: `L'essence de bois ${id} n'existe pas.` });
       }
+
+      const deletedWood = await wood.destroy();
   
-      res.status(200).json({ message: `L'essence de bois ${id} a été supprimée.` });
+      if (deletedWood) {
+        const imagePath = wood.image.substring(wood.image.lastIndexOf('/') + 1);
+        fs.unlink(`./uploads/${imagePath}`, (err) => {
+          if (err) {
+            console.error(err);
+          }
+        });
+  
+        res.status(200).json({ message: `L'essence de bois ${id} a été supprimée.` });
+      } else {
+        res.status(500).json({ message: 'Une erreur est survenue lors de la suppression de l\'essence de bois.' });
+      }
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Une erreur est survenue lors de la suppression de l\'essence de bois.' });
     }
   };
+
   
   
   
